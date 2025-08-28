@@ -27,6 +27,37 @@ router.get("/byAuthor", async(req,res) => {
   res.status(200).json({result: result.rows});
 })
 
+router.delete("/:id", async (req, res) => {
+  const { id } = req.params;
+
+  const result = await pool.query(
+    "DELETE FROM books WHERE id = $1 RETURNING *",
+    [id]
+  );
+
+  if (result.rowCount === 0) {
+    return res.status(404).json({ message: "Book not found" });
+  }
+
+  res.status(200).json({ message: "Book deleted", deleted: result.rows[0] });
+});
+
+router.put("/:id", async (req, res) => {
+  const { id } = req.params;
+  const { title } = req.body; // expecting JSON body { "title": "New title" }
+
+  const result = await pool.query(
+    "UPDATE books SET name = $1 WHERE id = $2 RETURNING *",
+    [title, id]
+  );
+
+  if (result.rowCount === 0) {
+    return res.status(404).json({ message: "Book not found" });
+  }
+
+  res.status(200).json({ message: "Book updated", book: result.rows[0] });
+});
+
 
 
 module.exports = router;
