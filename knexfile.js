@@ -1,4 +1,6 @@
-require("dotenv").config();
+// Working with our migrations
+
+require("dotenv").config(); 
 
 module.exports = {
 
